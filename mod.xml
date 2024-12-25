@@ -1,5 +1,5 @@
 <Mod
-    name="120FPS"
-    description="120FPS Noita!"
+    name="FPS++"
+    description="Full control over the game's frame rate."
     request_no_api_restrictions="1"
 />

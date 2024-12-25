@@ -1,7 +1,7 @@
-dofile_once("mods/120fps/files/sult.lua")
-dofile_once("mods/120fps/NoitaPatcher/load.lua")
+dofile_once("mods/fpspp/files/sult.lua")
+dofile_once("mods/fpspp/NoitaPatcher/load.lua")
 
-ModLuaFileAppend("data/scripts/init.lua", "mods/120fps/files/init_appends.lua")
+ModLuaFileAppend("data/scripts/init.lua", "mods/fpspp/files/init_appends.lua")
 ModTextFileSetContent("data/scripts/init.lua", ModTextFileGetContent("data/scripts/init.lua"))
 
 local ffi = require("ffi")
@@ -23,20 +23,20 @@ local systems = { "MoveToSurfaceOnCreateSystem", "AttachToEntitySystem", "Inheri
     "IKLimbAttackerSystem", "IKLimbWalkerSystem", "IKLimbsAnimatorSystem", "IKLimbSystem", "SpriteSystem", "GameStatsSystem",
 }
 local excluded_systems = {
-    "ControlsSystem",
+    --"ControlsSystem",
     "InventoryGuiSystem",
     --"CharacterPlatformingSystem",
     --"CharacterCollisionSystem",
     --"PlayerCollisionSystem",
-    "Inventory2System",
-    "PlatformShooterPlayerSystem",
+    --"Inventory2System",
+    --"PlatformShooterPlayerSystem",
     "ItemPickUpperSystem",
-    "SpriteAnimatorSystem",
-    "StatusEffectDataSystem",
+    --"SpriteAnimatorSystem",
+    --"StatusEffectDataSystem",
     --"ProjectileSystem",
     "LuaSystem",
-    "VerletPhysicsSystem",
-    "SpriteSystem",
+    --"VerletPhysicsSystem",
+    --"SpriteSystem",
 }
 for i, system in ipairs(excluded_systems) do
     table.remove(systems, table.find(systems, function(s) return s == system end))
@@ -44,7 +44,7 @@ end
 
 function OnWorldInitialized()
     local entity = EntityCreateNew()
-    EntityAddComponent2(entity, "LuaComponent", { script_source_file = "mods/120fps/files/sprite_interpose.lua", execute_every_n_frame = 0 })
+    EntityAddComponent2(entity, "LuaComponent", { script_source_file = "mods/fpspp/files/sprite_interpolate.lua", execute_every_n_frame = 0 })
 end
 
 local time_scale = 1
@@ -54,8 +54,8 @@ local ModTextFileSetContent = ModTextFileSetContent
 local button_frames = {}
 function OnWorldPreUpdate()
     local internal = fract_frame >= math.floor(previous_fract_frame) + 1
-    ModTextFileSetContent("mods/120fps/files/fract_frame.txt", ("%.16a"):format(fract_frame))
-    ModTextFileSetContent("mods/120fps/files/internal.txt", tostring(internal))
+    ModTextFileSetContent("mods/fpspp/files/fract_frame.txt", ("%.16a"):format(fract_frame))
+    ModTextFileSetContent("mods/fpspp/files/internal.txt", tostring(internal))
     previous_fract_frame = fract_frame
     fract_frame = fract_frame + time_scale
     for i, system in ipairs(systems) do
@@ -99,4 +99,8 @@ function OnWorldPreUpdate()
         end
         debug_print(time_scale)
     end
+end
+
+function OnWorldPostUpdate()
+    print("fpspp", GameGetFrameNum())
 end

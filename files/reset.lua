@@ -1,0 +1,1 @@
+print("reset OK",   GameGetFrameNum())

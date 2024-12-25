@@ -1,4 +1,4 @@
-dofile_once("mods/120fps/files/sult.lua")
+dofile_once("mods/fpspp/files/sult.lua")
 
 local Entity = setmetatable(Class {
     x = VariableAccessor("x", "value_float"),
@@ -15,14 +15,15 @@ local Entity = setmetatable(Class {
     __call = function(t, ...) return setmetatable({ id = ... }, t) end,
 })
 
-local fract_frame = tonumber(ModTextFileGetContent("mods/120fps/files/fract_frame.txt"))
-local internal = ModTextFileGetContent("mods/120fps/files/internal.txt") ~= "false"
+local fract_frame = tonumber(ModTextFileGetContent("mods/fpspp/files/fract_frame.txt"))
+local internal = ModTextFileGetContent("mods/fpspp/files/internal.txt") ~= "false"
 local f = fract_frame - math.floor(fract_frame)
 
 local entities = EntityGetInRadius(0, 0, math.huge)
 for i, entity in ipairs(entities) do
     local entity_data = Entity(entity)
     local x, y, rotation, scale_x, scale_y = EntityGetTransform(entity)
+    if EntityGetComponent(entity, "SpriteComponent") == nil then goto continue end
     if EntityGetComponent(entity, "VariableStorageComponent", "x") == nil then
         entity_data.previous_x = x
         entity_data.previous_y = y
@@ -48,4 +49,8 @@ for i, entity in ipairs(entities) do
         lerp(entity_data.previous_scale_x, scale_x, f),
         lerp(entity_data.previous_scale_y, scale_y, f)
     )
+    ::continue::
 end
+
+print("interpolate OK", GameGetFrameNum())
+SetTimeOut(0, "mods/fpspp/files/reset.lua")
