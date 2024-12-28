@@ -1,1 +1,0 @@
-print("reset OK",   GameGetFrameNum())
