@@ -104,6 +104,7 @@ local camera_x, camera_y
 local previous_camera_x, previous_camera_y
 function OnWorldPostUpdate()
     local internal = ModTextFileGetContent("mods/fpspp/files/internal.txt") ~= "false"
+    local fract_frame = tonumber(ModTextFileGetContent("mods/fpspp/files/fract_frame.txt")) or 0
     local weight = fract_frame - math.floor(fract_frame)
     if ModSettingGet("fpspp.interpolation") == "predict" then
         weight = weight + 1
