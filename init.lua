@@ -29,7 +29,7 @@ local ModTextFileSetContent = ModTextFileSetContent
 
 local fract_frame = 0
 local frames = {}
-np.CrossCallAdd("fpspp.valve", function()
+local function valve()
     local previous_fract_frame = fract_frame
     fract_frame = fract_frame + get_time_scale()
     local internal = fract_frame >= math.floor(previous_fract_frame) + 1
@@ -72,9 +72,10 @@ np.CrossCallAdd("fpspp.valve", function()
         ComponentSetValue2(controls, "mButtonFrameInventory", 0)
         ::continue::
     end
-end)
+end
+np.CrossCallAdd("fpspp.valve", valve)
 function OnWorldPreUpdate()
-    SetTimeOut(0, "mods/fpspp/files/valve.lua")
+    valve() --SetTimeOut(0, "mods/fpspp/files/valve.lua")
 end
 
 ffi.cdef [[
@@ -111,7 +112,7 @@ function OnWorldPostUpdate()
     end
     for i, entity in ipairs(EntityGetInRadius(0, 0, math.huge)) do
         local weight = weight
-        if ModSettingGet("fpspp.interpolation") == "predict" and EntityHasTag(entity, "projectile") then
+        if ModSettingGet("fpspp.interpolation") == "predictive" and EntityHasTag(entity, "projectile") then
             weight = weight + 1
         end
         for i, sprite in ipairs(EntityGetComponent(entity, "SpriteComponent") or {}) do
@@ -122,7 +123,7 @@ function OnWorldPostUpdate()
                 end
                 local previous_transform = previous_transforms[sprite]
                 local transform = transforms[sprite]
-                if previous_transform ~= nil and transform ~= nil and ModSettingGet("fpspp.interpolation") ~= "off" then
+                if previous_transform ~= nil and transform ~= nil and ModSettingGet("fpspp.interpolation") ~= "disabled" then
                     p_sprite.x = lerp(previous_transform[1], transform[1], weight)
                     p_sprite.y = lerp(previous_transform[2], transform[2], weight)
                     p_sprite.rotation_x, p_sprite.rotation_y = lerp_angle_vec(previous_transform[3], previous_transform[4], transform[3], transform[4], weight)
@@ -138,7 +139,7 @@ function OnWorldPostUpdate()
         previous_camera_x, previous_camera_y = camera_x, camera_y
         camera_x, camera_y = GameGetCameraPos()
     end
-    if previous_camera_x ~= nil and previous_camera_y ~= nil and camera_x ~= nil and camera_y ~= nil and ModSettingGet("fpspp.interpolation") ~= "off" then
+    if previous_camera_x ~= nil and previous_camera_y ~= nil and camera_x ~= nil and camera_y ~= nil and ModSettingGet("fpspp.interpolation") ~= "disabled" then
         GameSetCameraPos(lerp(previous_camera_x, camera_x, weight), lerp(previous_camera_y, camera_y, weight))
     end
 

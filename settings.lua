@@ -17,8 +17,8 @@ mod_settings =
         id = "interpolation",
         ui_name = "Interpolation",
         ui_description = "The method used to interpolate transforms between frames.",
-        value_default = "delay",
-        values = { { "delay", "Delay" }, { "predict", "Predict" }, { "off", "Off" } },
+        value_default = "predictive",
+        values = { { "predictive", "Predictive" }, { "general", "General" }, { "disabled", "Disabled" } },
         scope = MOD_SETTING_SCOPE_RUNTIME,
     },
 }
