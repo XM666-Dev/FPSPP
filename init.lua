@@ -28,10 +28,9 @@ end
 local ModTextFileSetContent = ModTextFileSetContent
 
 local fract_frame = 0
-local previous_fract_frame
 local frames = {}
 np.CrossCallAdd("fpspp.valve", function()
-    previous_fract_frame = fract_frame
+    local previous_fract_frame = fract_frame
     fract_frame = fract_frame + get_time_scale()
     local internal = fract_frame >= math.floor(previous_fract_frame) + 1
     ModTextFileSetContent("mods/fpspp/files/internal.txt", tostring(internal))
@@ -105,15 +104,16 @@ local previous_camera_x, previous_camera_y
 function OnWorldPostUpdate()
     local internal = ModTextFileGetContent("mods/fpspp/files/internal.txt") ~= "false"
     local weight = fract_frame - math.floor(fract_frame)
-    if ModSettingGet("fpspp.interpolation") == "predict" then
-        weight = weight + 1
-    end
 
     if internal then
         previous_transforms = transforms
         transforms = {}
     end
     for i, entity in ipairs(EntityGetInRadius(0, 0, math.huge)) do
+        local weight = weight
+        if ModSettingGet("fpspp.interpolation") == "predict" and EntityHasTag(entity, "projectile") then
+            weight = weight + 1
+        end
         for i, sprite in ipairs(EntityGetComponent(entity, "SpriteComponent") or {}) do
             local p_sprite = get_pp_sprite(sprite)[0]
             if p_sprite ~= nil then
@@ -138,9 +138,9 @@ function OnWorldPostUpdate()
         previous_camera_x, previous_camera_y = camera_x, camera_y
         camera_x, camera_y = GameGetCameraPos()
     end
-    if previous_camera_x == nil or previous_camera_y == nil or camera_x == nil or camera_y == nil then goto continue end
-    GameSetCameraPos(lerp(previous_camera_x, camera_x, weight), lerp(previous_camera_y, camera_y, weight))
-    ::continue::
+    if previous_camera_x ~= nil and previous_camera_y ~= nil and camera_x ~= nil and camera_y ~= nil and ModSettingGet("fpspp.interpolation") ~= "off" then
+        GameSetCameraPos(lerp(previous_camera_x, camera_x, weight), lerp(previous_camera_y, camera_y, weight))
+    end
 
     --local player = EntityGetWithTag("player_unit")[1]
     --if player == nil then return end
