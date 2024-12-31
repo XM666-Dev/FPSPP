@@ -1,7 +1,7 @@
 dofile_once("mods/fpspp/files/tactic.lua")
-dofile_once("mods/fpspp/NoitaPatcher/load.lua")
+--dofile_once("mods/fpspp/NoitaPatcher/load.lua")
 
-local np = require("noitapatcher")
+--local np = require("noitapatcher")
 local ffi = require("ffi")
 local dev = DebugGetIsDevBuild()
 local p_frame = ffi.cast("int**", dev and 0x134328C or 0x122172C)[0]
@@ -14,7 +14,7 @@ function OnPausePreUpdate()
 end
 
 function get_time_scale_internal()
-    return 60 / ModSettingGet("fpspp.framerate")
+    return 1 --60 / ModSettingGet("fpspp.framerate")
 end
 
 function get_time_scale_external()
@@ -95,7 +95,7 @@ local function valve()
         ComponentSetValue2(world_state_component, "wind", ComponentGetValue2(world_state_component, "wind") * get_time_scale())
     end
 end
-np.CrossCallAdd("fpspp.valve", valve)
+--np.CrossCallAdd("fpspp.valve", valve)
 function OnWorldPreUpdate()
     valve() --SetTimeOut(0, "mods/fpspp/files/valve.lua")
 end
