@@ -28,8 +28,49 @@ end
 local ModTextFileSetContent = ModTextFileSetContent
 
 local fract_frame = 0
-local frames = {}
+--local frames = { { mButtonFrameFire = 0, mButtonFrameFire2 = 0, mButtonFrameAction = 0, mButtonFrameThrow = 0, mButtonFrameInteract = 0, mButtonFrameLeft = 0, mButtonFrameRight = 0, mButtonFrameUp = 0, mButtonFrameDown = 0, mButtonFrameJump = 0, mButtonFrameRun = 0, mButtonFrameFly = 0, mButtonFrameDig = 0, mButtonFrameChangeItemR = 0, mButtonFrameChangeItemL = 0, mButtonFrameInventory = 0, mButtonFrameHolsterItem = 0, mButtonFrameDropItem = 0, mButtonFrameKick = 0, mButtonFrameEat = 0, mButtonFrameLeftClick = 0, mButtonFrameRightClick = 0, mButtonFrameTransformLeft = 0, mButtonFrameTransformRight = 0, mButtonFrameTransformUp = 0, mButtonFrameTransformDown = 0 }, { mButtonFrameFire = 0, mButtonFrameFire2 = 0, mButtonFrameAction = 0, mButtonFrameThrow = 0, mButtonFrameInteract = 0, mButtonFrameLeft = 0, mButtonFrameRight = 0, mButtonFrameUp = 0, mButtonFrameDown = 0, mButtonFrameJump = 0, mButtonFrameRun = 0, mButtonFrameFly = 0, mButtonFrameDig = 0, mButtonFrameChangeItemR = 0, mButtonFrameChangeItemL = 0, mButtonFrameInventory = 0, mButtonFrameHolsterItem = 0, mButtonFrameDropItem = 0, mButtonFrameKick = 0, mButtonFrameEat = 0, mButtonFrameLeftClick = 0, mButtonFrameRightClick = 0, mButtonFrameTransformLeft = 0, mButtonFrameTransformRight = 0, mButtonFrameTransformUp = 0, mButtonFrameTransformDown = 0 }, { mButtonFrameFire = 0, mButtonFrameFire2 = 0, mButtonFrameAction = 0, mButtonFrameThrow = 0, mButtonFrameInteract = 0, mButtonFrameLeft = 0, mButtonFrameRight = 0, mButtonFrameUp = 0, mButtonFrameDown = 0, mButtonFrameJump = 0, mButtonFrameRun = 0, mButtonFrameFly = 0, mButtonFrameDig = 0, mButtonFrameChangeItemR = 0, mButtonFrameChangeItemL = 0, mButtonFrameInventory = 0, mButtonFrameHolsterItem = 0, mButtonFrameDropItem = 0, mButtonFrameKick = 0, mButtonFrameEat = 0, mButtonFrameLeftClick = 0, mButtonFrameRightClick = 0, mButtonFrameTransformLeft = 0, mButtonFrameTransformRight = 0, mButtonFrameTransformUp = 0, mButtonFrameTransformDown = 0 }, { mButtonFrameFire = 0, mButtonFrameFire2 = 0, mButtonFrameAction = 0, mButtonFrameThrow = 0, mButtonFrameInteract = 0, mButtonFrameLeft = 0, mButtonFrameRight = 0, mButtonFrameUp = 0, mButtonFrameDown = 0, mButtonFrameJump = 0, mButtonFrameRun = 0, mButtonFrameFly = 0, mButtonFrameDig = 0, mButtonFrameChangeItemR = 0, mButtonFrameChangeItemL = 0, mButtonFrameInventory = 0, mButtonFrameHolsterItem = 0, mButtonFrameDropItem = 0, mButtonFrameKick = 0, mButtonFrameEat = 0, mButtonFrameLeftClick = 0, mButtonFrameRightClick = 0, mButtonFrameTransformLeft = 0, mButtonFrameTransformRight = 0, mButtonFrameTransformUp = 0, mButtonFrameTransformDown = 0 } }
 local function valve()
+    for i = 0, 3 do
+        local player = np.GetPlayerEntity(i)
+        if player ~= nil then
+            local controls = EntityGetFirstComponent(player, "ControlsComponent")
+            if controls ~= nil then
+                ComponentSetValue2(controls, "mButtonFrameInventory", 0)
+            end
+        end
+        --local frames = frames[i + 1]
+        --for key, previous_frame in pairs(frames) do
+        --    local frame = ComponentGetValue2(controls, key)
+        --    --if internal then
+        --    --    --if frame == 1 then
+        --    --    --    frames[key] = 0
+        --    --    --    ComponentSetValue2(controls, key, GameGetFrameNum() + 1)
+        --    --    --end
+        --    --else
+        --    --end
+        --    if frame == GameGetFrameNum() and key == "mButtonFrameInventory" then
+        --        --frames[key] = 1
+        --        ComponentSetValue2(controls, key, 0)
+        --    end
+        --end
+        --ComponentSetValue2(controls, "mButtonDownDelayLineFire", 0)
+        --local inventory = EntityGetFirstComponent(player, "Inventory2Component")
+        --if inventory == nil then goto continue end
+        --ComponentSetValue2(inventory, "mLastItemSwitchFrame", 0)
+        --if internal then
+        --    local frame = frames[player]
+        --    if frame == nil then goto continue end
+        --    frames[player] = nil
+        --    ComponentSetValue2(controls, "mButtonFrameInventory", frame)
+        --    goto continue
+        --end
+        --local frame = ComponentGetValue2(controls, "mButtonFrameInventory")
+        --if frame < GameGetFrameNum() then goto continue end
+        --frames[player] = frame
+        --ComponentSetValue2(controls, "mButtonFrameInventory", 0)
+        --::continue::
+    end
+
     local previous_fract_frame = fract_frame
     fract_frame = fract_frame + get_time_scale()
     local internal = fract_frame >= math.floor(previous_fract_frame) + 1
@@ -52,25 +93,6 @@ local function valve()
     if world_state_component ~= nil then
         ComponentSetValue2(world_state_component, "time_dt", get_time_scale())
         ComponentSetValue2(world_state_component, "wind", ComponentGetValue2(world_state_component, "wind") * get_time_scale())
-    end
-
-    for i = 0, 3 do
-        local player = np.GetPlayerEntity(i)
-        if player == nil then goto continue end
-        local controls = EntityGetFirstComponent(player, "ControlsComponent")
-        if controls == nil then goto continue end
-        if internal then
-            local frame = frames[player]
-            if frame == nil then goto continue end
-            frames[player] = nil
-            ComponentSetValue2(controls, "mButtonFrameInventory", frame)
-            goto continue
-        end
-        local frame = ComponentGetValue2(controls, "mButtonFrameInventory")
-        if frame < GameGetFrameNum() then goto continue end
-        frames[player] = frame
-        ComponentSetValue2(controls, "mButtonFrameInventory", 0)
-        ::continue::
     end
 end
 np.CrossCallAdd("fpspp.valve", valve)
