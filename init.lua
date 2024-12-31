@@ -1,7 +1,7 @@
 dofile_once("mods/fpspp/files/tactic.lua")
---dofile_once("mods/fpspp/NoitaPatcher/load.lua")
+dofile_once("mods/fpspp/NoitaPatcher/load.lua")
 
---local np = require("noitapatcher")
+local np = require("noitapatcher")
 local ffi = require("ffi")
 local dev = DebugGetIsDevBuild()
 local p_frame = ffi.cast("int**", dev and 0x134328C or 0x122172C)[0]

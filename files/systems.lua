@@ -11,7 +11,7 @@ return {
     "CharacterCollisionSystem",
     "PlayerCollisionSystem",
     --"Inventory2System",
-    "PlatformShooterPlayerSystem",
+    --"PlatformShooterPlayerSystem",
     --"ItemPickUpperSystem",
     "AISystem",
     "AbilitySystem",
