@@ -6,7 +6,6 @@ local ffi = require("ffi")
 local dev = DebugGetIsDevBuild()
 local p_frame = ffi.cast("int**", dev and 0x134328C or 0x122172C)[0]
 local p_framerate_inverse = ffi.cast("double*", dev and 0x1341B28 or 0x121FBD8)
---local p_framerate = ffi.cast("int*", dev and 0x19EE0C or 0x19EDFC)
 
 p_framerate_inverse[0] = 1 / ModSettingGet("fpspp.framerate")
 function OnPausePreUpdate()
@@ -14,7 +13,7 @@ function OnPausePreUpdate()
 end
 
 function get_time_scale_internal()
-    return 1 --60 / ModSettingGet("fpspp.framerate")
+    return 60 / ModSettingGet("fpspp.framerate")
 end
 
 function get_time_scale_external()
@@ -28,51 +27,12 @@ end
 local ModTextFileSetContent = ModTextFileSetContent
 
 local fract_frame = 0
---local frames = { { mButtonFrameFire = 0, mButtonFrameFire2 = 0, mButtonFrameAction = 0, mButtonFrameThrow = 0, mButtonFrameInteract = 0, mButtonFrameLeft = 0, mButtonFrameRight = 0, mButtonFrameUp = 0, mButtonFrameDown = 0, mButtonFrameJump = 0, mButtonFrameRun = 0, mButtonFrameFly = 0, mButtonFrameDig = 0, mButtonFrameChangeItemR = 0, mButtonFrameChangeItemL = 0, mButtonFrameInventory = 0, mButtonFrameHolsterItem = 0, mButtonFrameDropItem = 0, mButtonFrameKick = 0, mButtonFrameEat = 0, mButtonFrameLeftClick = 0, mButtonFrameRightClick = 0, mButtonFrameTransformLeft = 0, mButtonFrameTransformRight = 0, mButtonFrameTransformUp = 0, mButtonFrameTransformDown = 0 }, { mButtonFrameFire = 0, mButtonFrameFire2 = 0, mButtonFrameAction = 0, mButtonFrameThrow = 0, mButtonFrameInteract = 0, mButtonFrameLeft = 0, mButtonFrameRight = 0, mButtonFrameUp = 0, mButtonFrameDown = 0, mButtonFrameJump = 0, mButtonFrameRun = 0, mButtonFrameFly = 0, mButtonFrameDig = 0, mButtonFrameChangeItemR = 0, mButtonFrameChangeItemL = 0, mButtonFrameInventory = 0, mButtonFrameHolsterItem = 0, mButtonFrameDropItem = 0, mButtonFrameKick = 0, mButtonFrameEat = 0, mButtonFrameLeftClick = 0, mButtonFrameRightClick = 0, mButtonFrameTransformLeft = 0, mButtonFrameTransformRight = 0, mButtonFrameTransformUp = 0, mButtonFrameTransformDown = 0 }, { mButtonFrameFire = 0, mButtonFrameFire2 = 0, mButtonFrameAction = 0, mButtonFrameThrow = 0, mButtonFrameInteract = 0, mButtonFrameLeft = 0, mButtonFrameRight = 0, mButtonFrameUp = 0, mButtonFrameDown = 0, mButtonFrameJump = 0, mButtonFrameRun = 0, mButtonFrameFly = 0, mButtonFrameDig = 0, mButtonFrameChangeItemR = 0, mButtonFrameChangeItemL = 0, mButtonFrameInventory = 0, mButtonFrameHolsterItem = 0, mButtonFrameDropItem = 0, mButtonFrameKick = 0, mButtonFrameEat = 0, mButtonFrameLeftClick = 0, mButtonFrameRightClick = 0, mButtonFrameTransformLeft = 0, mButtonFrameTransformRight = 0, mButtonFrameTransformUp = 0, mButtonFrameTransformDown = 0 }, { mButtonFrameFire = 0, mButtonFrameFire2 = 0, mButtonFrameAction = 0, mButtonFrameThrow = 0, mButtonFrameInteract = 0, mButtonFrameLeft = 0, mButtonFrameRight = 0, mButtonFrameUp = 0, mButtonFrameDown = 0, mButtonFrameJump = 0, mButtonFrameRun = 0, mButtonFrameFly = 0, mButtonFrameDig = 0, mButtonFrameChangeItemR = 0, mButtonFrameChangeItemL = 0, mButtonFrameInventory = 0, mButtonFrameHolsterItem = 0, mButtonFrameDropItem = 0, mButtonFrameKick = 0, mButtonFrameEat = 0, mButtonFrameLeftClick = 0, mButtonFrameRightClick = 0, mButtonFrameTransformLeft = 0, mButtonFrameTransformRight = 0, mButtonFrameTransformUp = 0, mButtonFrameTransformDown = 0 } }
-local function valve()
-    for i = 0, 3 do
-        local player = np.GetPlayerEntity(i)
-        if player ~= nil then
-            local controls = EntityGetFirstComponent(player, "ControlsComponent")
-            if controls ~= nil then
-                ComponentSetValue2(controls, "mButtonFrameInventory", 0)
-            end
-        end
-        --local frames = frames[i + 1]
-        --for key, previous_frame in pairs(frames) do
-        --    local frame = ComponentGetValue2(controls, key)
-        --    --if internal then
-        --    --    --if frame == 1 then
-        --    --    --    frames[key] = 0
-        --    --    --    ComponentSetValue2(controls, key, GameGetFrameNum() + 1)
-        --    --    --end
-        --    --else
-        --    --end
-        --    if frame == GameGetFrameNum() and key == "mButtonFrameInventory" then
-        --        --frames[key] = 1
-        --        ComponentSetValue2(controls, key, 0)
-        --    end
-        --end
-        --ComponentSetValue2(controls, "mButtonDownDelayLineFire", 0)
-        --local inventory = EntityGetFirstComponent(player, "Inventory2Component")
-        --if inventory == nil then goto continue end
-        --ComponentSetValue2(inventory, "mLastItemSwitchFrame", 0)
-        --if internal then
-        --    local frame = frames[player]
-        --    if frame == nil then goto continue end
-        --    frames[player] = nil
-        --    ComponentSetValue2(controls, "mButtonFrameInventory", frame)
-        --    goto continue
-        --end
-        --local frame = ComponentGetValue2(controls, "mButtonFrameInventory")
-        --if frame < GameGetFrameNum() then goto continue end
-        --frames[player] = frame
-        --ComponentSetValue2(controls, "mButtonFrameInventory", 0)
-        --::continue::
-    end
+local button_frames = {}
+function OnWorldPreUpdate()
+    local time_scale = get_time_scale()
 
     local previous_fract_frame = fract_frame
-    fract_frame = fract_frame + get_time_scale()
+    fract_frame = fract_frame + time_scale
     local internal = fract_frame >= math.floor(previous_fract_frame) + 1
     ModTextFileSetContent("mods/fpspp/files/internal.txt", tostring(internal))
     ModTextFileSetContent("mods/fpspp/files/fract_frame.txt", ("%.16a"):format(fract_frame))
@@ -84,20 +44,36 @@ local function valve()
     for i, system in ipairs(dofile_once("mods/fpspp/files/systems.lua")) do
         np.ComponentUpdatesSetEnabled(system, internal)
     end
-    np.MagicNumbersSetValue("DEBUG_PAUSE_BOX2D", not internal)
-    np.MagicNumbersSetValue("DEBUG_PAUSE_GRID_UPDATE", not internal)
-    np.MagicNumbersSetValue("GRID_MAX_UPDATES_PER_FRAME", internal and 128 or 0)
+    np.EnableGridWorldUpdate(internal)
+
+    for i, system in ipairs(dofile_once("mods/fpspp/files/systems_all.lua")) do
+        np.ComponentUpdatesSetStep(system, 1 / 60)
+    end
+
+    for i, player in ipairs(EntityGetWithTag("player_unit")) do
+        local controls = EntityGetFirstComponent(player, "ControlsComponent")
+        if controls ~= nil then
+            local frames = button_frames[player] or {}
+            button_frames[player] = frames
+            for i, field in ipairs(dofile_once("mods/fpspp/files/fields.lua")) do
+                local frame = ComponentGetValue2(controls, field)
+                if frame ~= 0 then
+                    frames[i] = frame
+                    ComponentSetValue2(controls, field, 0)
+                end
+                if internal then
+                    ComponentSetValue2(controls, field, frames[i] or 0)
+                end
+            end
+        end
+    end
 
     local world_state = GameGetWorldStateEntity()
     local world_state_component = EntityGetFirstComponent(world_state, "WorldStateComponent")
     if world_state_component ~= nil then
-        ComponentSetValue2(world_state_component, "time_dt", get_time_scale())
-        ComponentSetValue2(world_state_component, "wind", ComponentGetValue2(world_state_component, "wind") * get_time_scale())
+        ComponentSetValue2(world_state_component, "time_dt", time_scale)
+        ComponentSetValue2(world_state_component, "wind", ComponentGetValue2(world_state_component, "wind") * time_scale)
     end
-end
---np.CrossCallAdd("fpspp.valve", valve)
-function OnWorldPreUpdate()
-    valve() --SetTimeOut(0, "mods/fpspp/files/valve.lua")
 end
 
 ffi.cdef [[
@@ -164,36 +140,6 @@ function OnWorldPostUpdate()
     if previous_camera_x ~= nil and previous_camera_y ~= nil and camera_x ~= nil and camera_y ~= nil and ModSettingGet("fpspp.interpolation") ~= "disabled" then
         GameSetCameraPos(lerp(previous_camera_x, camera_x, weight), lerp(previous_camera_y, camera_y, weight))
     end
-
-    --local player = EntityGetWithTag("player_unit")[1]
-    --if player == nil then return end
-    --local sprite = EntityGetFirstComponent(player, "SpriteComponent")
-    --if sprite == nil then return end
-    --local p_sprite = get_pp_sprite(sprite)[0]
-    --local pointer = ffi.cast("float*", p_sprite)
-    --if InputIsKeyJustDown(11) then
-    --    search(pointer)
-    --end
-    --if InputIsKeyJustDown(12) then
-    --    clear()
-    --end
-end
-
-local previous_values = {}
-function search(pointer)
-    print("\n")
-    for i = 0, 255 do
-        local value = pointer[i]
-        local previous_value = previous_values[i]
-        if previous_value ~= nil and value > previous_value then
-            print(i, value .. " > " .. previous_value)
-        end
-        previous_values[i] = value
-    end
-end
-
-function clear()
-    previous_values = {}
 end
 
 function OnModPreInit()

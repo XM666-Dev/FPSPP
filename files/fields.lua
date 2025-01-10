@@ -1,0 +1,18 @@
+return {
+    "mButtonFrameFire",
+    "mButtonFrameFire2",
+    "mButtonFrameThrow",
+    "mButtonFrameInteract",
+    "mButtonFrameLeft",
+    "mButtonFrameRight",
+    "mButtonFrameUp",
+    "mButtonFrameDown",
+    "mButtonFrameFly",
+    "mButtonFrameChangeItemR",
+    "mButtonFrameChangeItemL",
+    "mButtonFrameInventory",
+    "mButtonFrameDropItem",
+    "mButtonFrameKick",
+    "mButtonFrameLeftClick",
+    "mButtonFrameRightClick",
+}

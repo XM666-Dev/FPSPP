@@ -8,7 +8,8 @@ do_mod_appends = function(filename, ...)
     do_mod_appends = orig_do_mod_appends
     do_mod_appends(filename, ...)
 
-    local noitapatcher_path = string.match(filename, "(.*)/load.lua")
+    local noitapatcher_path = ModTextFileGetContent("mods/NoitaPatcher/path.txt") or string.match(filename, "(.*)/load.lua")
+    ModTextFileSetContent("mods/NoitaPatcher/path.txt", noitapatcher_path)
     if not noitapatcher_path then
         print("Couldn't detect NoitaPatcher path")
     end
