@@ -87,8 +87,8 @@ ffi.cdef [[
         float scale_x;
         float scale_y;
         char _[52];
-        int frame_x;
-        int frame_y;
+        int frame;
+        int frame_next;
         float frame_time;
     } Sprite;
 ]]
