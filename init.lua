@@ -44,11 +44,11 @@ function OnWorldPreUpdate()
     for i, system in ipairs(dofile_once("mods/fpspp/files/systems.lua")) do
         np.ComponentUpdatesSetEnabled(system, internal)
     end
-    np.EnableGridWorldUpdate(internal)
-
     for i, system in ipairs(dofile_once("mods/fpspp/files/systems_all.lua")) do
         np.ComponentUpdatesSetStep(system, 1 / 60)
     end
+
+    np.EnableGridWorldUpdate(internal)
 
     for i, player in ipairs(EntityGetWithTag("player_unit")) do
         local controls = EntityGetFirstComponent(player, "ControlsComponent")
