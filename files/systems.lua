@@ -26,7 +26,7 @@ return {
     "BiomeTrackerSystem",
     "BlackHoleSystem",
     "BossDragonSystem",
-    "BossHealthBarSystem",
+    --"BossHealthBarSystem",
     "CameraBoundSystem",
     "CardinalMovementSystem",
     "CellEaterSystem",
